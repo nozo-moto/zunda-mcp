@@ -4,7 +4,7 @@ MCP経由でずんだもんに喋らせま
 
 ## 機能
 
-- テキストを音声に変換して読み上げる
+- VOICE BOXを利用して、テキストからずんだもんの読み上げ音声をWAVで作成し、macOSの `afplay` で再生する
 
 ## インストール
 
@@ -13,6 +13,8 @@ go install github.com/nozo-moto/zunda-mcp@latest
 ```
 
 ## 使い方
+
+### MCP 
 
 mcp jsonに
 
@@ -24,7 +26,15 @@ mcp jsonに
 
 [VOICE BOX](https://voicevox.hiroshiba.jp/) をインストールして起動しておいてください
 
-Mac以外で動くかは検証してないです
+Mac以外ではafplayが存在しないので動かないです
+
+### CLI
+
+``` bash
+$ go run main.go -text こんにちはなのだ
+CLIモードで実行: text='こんにちはなのだ', speaker=1
+音声再生が完了しました。
+```
 
 
 ## openapi clientの作り方
