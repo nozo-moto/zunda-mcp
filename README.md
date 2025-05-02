@@ -1,65 +1,30 @@
 # テキスト読み上げMCPサーバー
 
-このプロジェクトは、[Model Context Protocol (MCP)](https://github.com/mark3labs/mcp-go)を使用して、テキストを音声に変換して読み上げるサーバーを実装したものです。
+MCP経由でずんだもんに喋らせま
 
 ## 機能
 
 - テキストを音声に変換して読み上げる
-- 複数の言語に対応（日本語、英語、フランス語など）
 
 ## インストール
 
 ```
-go mod tidy
-go build -o tts-server
+go install github.com/nozo-moto/zunda-mcp@latest
 ```
 
 ## 使い方
 
-サーバーを起動します：
+mcp jsonに
 
 ```
-./tts-server
+    "zundamon-mcp": {
+      "command": "$HOME/go/bin/zundamon-mcp"
+    },
 ```
 
-このサーバーはMCP互換のクライアントからの接続を待ち受けます。
+[VOICE BOX](https://voicevox.hiroshiba.jp/) をインストールして起動しておいてください
 
-### ツール
-
-#### speak_text
-
-テキストを音声で読み上げます。
-
-**パラメータ：**
-
-- `text` (必須): 読み上げるテキスト
-- `language` (オプション): 読み上げ言語コード（デフォルト: "ja"）
-  - 対応言語: "ja" (日本語), "en" (英語), "fr" (フランス語), など
-
-**使用例：**
-
-```json
-{
-  "jsonrpc": "2.0",
-  "method": "mcp.call_tool",
-  "params": {
-    "name": "speak_text",
-    "arguments": {
-      "text": "こんにちは、世界",
-      "language": "ja"
-    }
-  },
-  "id": 1
-}
-```
-
-## 注意点
-
-- 音声の再生には、スピーカーが必要です
-- 一部の環境では、オーディオ出力の設定が必要な場合があります
-
-## 依存ライブラリ
-
+Mac以外で動くかは検証してないです
 
 
 ## openapi clientの作り方
