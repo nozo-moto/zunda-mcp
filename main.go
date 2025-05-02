@@ -36,7 +36,6 @@ func main() {
 	}
 
 	// text引数が指定されていない場合はMCPサーバーモードとして実行
-	// fmt.Println("MCPサーバーモードで起動します...")
 
 	// Create MCP server
 	s := server.NewMCPServer(
@@ -142,5 +141,5 @@ func speakText(ctx context.Context, text string, speakerID int32) error {
 		return fmt.Errorf("afplay実行エラー: %w", err)
 	}
 
-	return nil // 成功
+	return nil
 }
