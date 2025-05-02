@@ -1,0 +1,2566 @@
+openapi: 3.1.0
+info:
+  description: VOICEVOX の音声合成エンジンです。
+  title: VOICEVOX Engine
+  version: 0.23.0
+servers:
+- url: /
+paths:
+  /audio_query:
+    post:
+      description: 音声合成用のクエリの初期値を得ます。ここで得られたクエリはそのまま音声合成に利用できます。各値の意味は`Schemas`を参照してください。
+      operationId: audio_query_audio_query_post
+      parameters:
+      - explode: true
+        in: query
+        name: text
+        required: true
+        schema:
+          title: Text
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: speaker
+        required: true
+        schema:
+          title: Speaker
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: core_version
+        required: false
+        schema:
+          title: Core Version
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AudioQuery'
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: 音声合成用のクエリを作成する
+      tags:
+      - クエリ作成
+  /audio_query_from_preset:
+    post:
+      description: 音声合成用のクエリの初期値を得ます。ここで得られたクエリはそのまま音声合成に利用できます。各値の意味は`Schemas`を参照してください。
+      operationId: audio_query_from_preset_audio_query_from_preset_post
+      parameters:
+      - explode: true
+        in: query
+        name: text
+        required: true
+        schema:
+          title: Text
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: preset_id
+        required: true
+        schema:
+          title: Preset Id
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: core_version
+        required: false
+        schema:
+          title: Core Version
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AudioQuery'
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: 音声合成用のクエリをプリセットを用いて作成する
+      tags:
+      - クエリ作成
+  /accent_phrases:
+    post:
+      description: |-
+        テキストからアクセント句を得ます。
+        is_kanaが`true`のとき、テキストは次のAquesTalk 風記法で解釈されます。デフォルトは`false`です。
+        * 全てのカナはカタカナで記述される
+        * アクセント句は`/`または`、`で区切る。`、`で区切った場合に限り無音区間が挿入される。
+        * カナの手前に`_`を入れるとそのカナは無声化される
+        * アクセント位置を`'`で指定する。全てのアクセント句にはアクセント位置を1つ指定する必要がある。
+        * アクセント句末に`？`(全角)を入れることにより疑問文の発音ができる。
+      operationId: accent_phrases_accent_phrases_post
+      parameters:
+      - explode: true
+        in: query
+        name: text
+        required: true
+        schema:
+          title: Text
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: speaker
+        required: true
+        schema:
+          title: Speaker
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: is_kana
+        required: false
+        schema:
+          default: false
+          title: Is Kana
+          type: boolean
+        style: form
+      - explode: true
+        in: query
+        name: core_version
+        required: false
+        schema:
+          title: Core Version
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/AccentPhrase'
+                type: array
+          description: Successful Response
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParseKanaBadRequest'
+          description: 読み仮名のパースに失敗
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: テキストからアクセント句を得る
+      tags:
+      - クエリ編集
+  /mora_data:
+    post:
+      operationId: mora_data_mora_data_post
+      parameters:
+      - explode: true
+        in: query
+        name: speaker
+        required: true
+        schema:
+          title: Speaker
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: core_version
+        required: false
+        schema:
+          title: Core Version
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/AccentPhrase'
+              type: array
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/AccentPhrase'
+                type: array
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: アクセント句から音高・音素長を得る
+      tags:
+      - クエリ編集
+  /mora_length:
+    post:
+      operationId: mora_length_mora_length_post
+      parameters:
+      - explode: true
+        in: query
+        name: speaker
+        required: true
+        schema:
+          title: Speaker
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: core_version
+        required: false
+        schema:
+          title: Core Version
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/AccentPhrase'
+              type: array
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/AccentPhrase'
+                type: array
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: アクセント句から音素長を得る
+      tags:
+      - クエリ編集
+  /mora_pitch:
+    post:
+      operationId: mora_pitch_mora_pitch_post
+      parameters:
+      - explode: true
+        in: query
+        name: speaker
+        required: true
+        schema:
+          title: Speaker
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: core_version
+        required: false
+        schema:
+          title: Core Version
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/AccentPhrase'
+              type: array
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/AccentPhrase'
+                type: array
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: アクセント句から音高を得る
+      tags:
+      - クエリ編集
+  /synthesis:
+    post:
+      operationId: synthesis_synthesis_post
+      parameters:
+      - explode: true
+        in: query
+        name: speaker
+        required: true
+        schema:
+          title: Speaker
+          type: integer
+        style: form
+      - description: 疑問系のテキストが与えられたら語尾を自動調整する
+        explode: true
+        in: query
+        name: enable_interrogative_upspeak
+        required: false
+        schema:
+          default: true
+          description: 疑問系のテキストが与えられたら語尾を自動調整する
+          title: Enable Interrogative Upspeak
+          type: boolean
+        style: form
+      - explode: true
+        in: query
+        name: core_version
+        required: false
+        schema:
+          title: Core Version
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AudioQuery'
+        required: true
+      responses:
+        "200":
+          content:
+            audio/wav:
+              schema:
+                format: binary
+                type: string
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: 音声合成する
+      tags:
+      - 音声合成
+  /cancellable_synthesis:
+    post:
+      operationId: cancellable_synthesis_cancellable_synthesis_post
+      parameters:
+      - explode: true
+        in: query
+        name: speaker
+        required: true
+        schema:
+          title: Speaker
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: core_version
+        required: false
+        schema:
+          title: Core Version
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AudioQuery'
+        required: true
+      responses:
+        "200":
+          content:
+            audio/wav:
+              schema:
+                format: binary
+                type: string
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: 音声合成する（キャンセル可能）
+      tags:
+      - 音声合成
+  /multi_synthesis:
+    post:
+      operationId: multi_synthesis_multi_synthesis_post
+      parameters:
+      - explode: true
+        in: query
+        name: speaker
+        required: true
+        schema:
+          title: Speaker
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: core_version
+        required: false
+        schema:
+          title: Core Version
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/AudioQuery'
+              type: array
+        required: true
+      responses:
+        "200":
+          content:
+            application/zip:
+              schema:
+                format: binary
+                type: string
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: 複数まとめて音声合成する
+      tags:
+      - 音声合成
+  /sing_frame_audio_query:
+    post:
+      description: 歌唱音声合成用のクエリの初期値を得ます。ここで得られたクエリはそのまま歌唱音声合成に利用できます。各値の意味は`Schemas`を参照してください。
+      operationId: sing_frame_audio_query_sing_frame_audio_query_post
+      parameters:
+      - explode: true
+        in: query
+        name: speaker
+        required: true
+        schema:
+          title: Speaker
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: core_version
+        required: false
+        schema:
+          title: Core Version
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Score'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FrameAudioQuery'
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: 歌唱音声合成用のクエリを作成する
+      tags:
+      - クエリ作成
+  /sing_frame_f0:
+    post:
+      operationId: sing_frame_f0_sing_frame_f0_post
+      parameters:
+      - explode: true
+        in: query
+        name: speaker
+        required: true
+        schema:
+          title: Speaker
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: core_version
+        required: false
+        schema:
+          title: Core Version
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Body_sing_frame_f0_sing_frame_f0_post'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  type: number
+                type: array
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: 楽譜・歌唱音声合成用のクエリからフレームごとの基本周波数を得る
+      tags:
+      - クエリ編集
+  /sing_frame_volume:
+    post:
+      operationId: sing_frame_volume_sing_frame_volume_post
+      parameters:
+      - explode: true
+        in: query
+        name: speaker
+        required: true
+        schema:
+          title: Speaker
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: core_version
+        required: false
+        schema:
+          title: Core Version
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Body_sing_frame_volume_sing_frame_volume_post'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  type: number
+                type: array
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: 楽譜・歌唱音声合成用のクエリからフレームごとの音量を得る
+      tags:
+      - クエリ編集
+  /frame_synthesis:
+    post:
+      description: 歌唱音声合成を行います。
+      operationId: frame_synthesis_frame_synthesis_post
+      parameters:
+      - explode: true
+        in: query
+        name: speaker
+        required: true
+        schema:
+          title: Speaker
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: core_version
+        required: false
+        schema:
+          title: Core Version
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FrameAudioQuery'
+        required: true
+      responses:
+        "200":
+          content:
+            audio/wav:
+              schema:
+                format: binary
+                type: string
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Frame Synthesis
+      tags:
+      - 音声合成
+  /connect_waves:
+    post:
+      description: base64エンコードされたwavデータを一纏めにし、wavファイルで返します。
+      operationId: connect_waves_connect_waves_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                type: string
+              type: array
+        required: true
+      responses:
+        "200":
+          content:
+            audio/wav:
+              schema:
+                format: binary
+                type: string
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: base64エンコードされた複数のwavデータを一つに結合する
+      tags:
+      - その他
+  /validate_kana:
+    post:
+      description: |-
+        テキストがAquesTalk 風記法に従っているかどうかを判定します。
+        従っていない場合はエラーが返ります。
+      operationId: validate_kana_validate_kana_post
+      parameters:
+      - description: 判定する対象の文字列
+        explode: true
+        in: query
+        name: text
+        required: true
+        schema:
+          description: 判定する対象の文字列
+          title: Text
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                title: Response Validate Kana Validate Kana Post
+                type: boolean
+          description: Successful Response
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParseKanaBadRequest'
+          description: テキストが不正です
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: テキストがAquesTalk 風記法に従っているか判定する
+      tags:
+      - その他
+  /initialize_speaker:
+    post:
+      description: |-
+        指定されたスタイルを初期化します。
+        実行しなくても他のAPIは使用できますが、初回実行時に時間がかかることがあります。
+      operationId: initialize_speaker_initialize_speaker_post
+      parameters:
+      - explode: true
+        in: query
+        name: speaker
+        required: true
+        schema:
+          title: Speaker
+          type: integer
+        style: form
+      - description: 既に初期化済みのスタイルの再初期化をスキップするかどうか
+        explode: true
+        in: query
+        name: skip_reinit
+        required: false
+        schema:
+          default: false
+          description: 既に初期化済みのスタイルの再初期化をスキップするかどうか
+          title: Skip Reinit
+          type: boolean
+        style: form
+      - explode: true
+        in: query
+        name: core_version
+        required: false
+        schema:
+          title: Core Version
+          type: string
+        style: form
+      responses:
+        "204":
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Initialize Speaker
+      tags:
+      - その他
+  /is_initialized_speaker:
+    get:
+      description: 指定されたスタイルが初期化されているかどうかを返します。
+      operationId: is_initialized_speaker_is_initialized_speaker_get
+      parameters:
+      - explode: true
+        in: query
+        name: speaker
+        required: true
+        schema:
+          title: Speaker
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: core_version
+        required: false
+        schema:
+          title: Core Version
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                title: Response Is Initialized Speaker Is Initialized Speaker Get
+                type: boolean
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Is Initialized Speaker
+      tags:
+      - その他
+  /supported_devices:
+    get:
+      description: 対応デバイスの一覧を取得します。
+      operationId: supported_devices_supported_devices_get
+      parameters:
+      - explode: true
+        in: query
+        name: core_version
+        required: false
+        schema:
+          title: Core Version
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupportedDevicesInfo'
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Supported Devices
+      tags:
+      - その他
+  /morphable_targets:
+    post:
+      description: |-
+        指定されたベーススタイルに対してエンジン内の各キャラクターがモーフィング機能を利用可能か返します。
+        モーフィングの許可/禁止は`/speakers`の`speaker.supported_features.synthesis_morphing`に記載されています。
+        プロパティが存在しない場合は、モーフィングが許可されているとみなします。
+        返り値のスタイルIDはstring型なので注意。
+      operationId: morphable_targets_morphable_targets_post
+      parameters:
+      - explode: true
+        in: query
+        name: core_version
+        required: false
+        schema:
+          title: Core Version
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                type: integer
+              type: array
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  additionalProperties:
+                    $ref: '#/components/schemas/MorphableTargetInfo'
+                type: array
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: 指定したスタイルに対してエンジン内のキャラクターがモーフィングが可能か判定する
+      tags:
+      - 音声合成
+  /synthesis_morphing:
+    post:
+      description: |-
+        指定された2種類のスタイルで音声を合成、指定した割合でモーフィングした音声を得ます。
+        モーフィングの割合は`morph_rate`で指定でき、0.0でベースのスタイル、1.0でターゲットのスタイルに近づきます。
+      operationId: _synthesis_morphing_synthesis_morphing_post
+      parameters:
+      - explode: true
+        in: query
+        name: base_speaker
+        required: true
+        schema:
+          title: Base Speaker
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: target_speaker
+        required: true
+        schema:
+          title: Target Speaker
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: morph_rate
+        required: true
+        schema:
+          maximum: 1.0
+          minimum: 0.0
+          title: Morph Rate
+          type: number
+        style: form
+      - explode: true
+        in: query
+        name: core_version
+        required: false
+        schema:
+          title: Core Version
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AudioQuery'
+        required: true
+      responses:
+        "200":
+          content:
+            audio/wav:
+              schema:
+                format: binary
+                type: string
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: 2種類のスタイルでモーフィングした音声を合成する
+      tags:
+      - 音声合成
+  /presets:
+    get:
+      description: エンジンが保持しているプリセットの設定を返します
+      operationId: get_presets_presets_get
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Preset'
+                type: array
+          description: プリセットのリスト
+      summary: Get Presets
+      tags:
+      - その他
+  /add_preset:
+    post:
+      description: 新しいプリセットを追加します
+      operationId: add_preset_add_preset_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Preset'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                title: Response Add Preset Add Preset Post
+                type: integer
+          description: 追加したプリセットのプリセットID
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Add Preset
+      tags:
+      - その他
+  /update_preset:
+    post:
+      description: 既存のプリセットを更新します
+      operationId: update_preset_update_preset_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Preset'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                title: Response Update Preset Update Preset Post
+                type: integer
+          description: 更新したプリセットのプリセットID
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Update Preset
+      tags:
+      - その他
+  /delete_preset:
+    post:
+      description: 既存のプリセットを削除します
+      operationId: delete_preset_delete_preset_post
+      parameters:
+      - description: 削除するプリセットのプリセットID
+        explode: true
+        in: query
+        name: id
+        required: true
+        schema:
+          description: 削除するプリセットのプリセットID
+          title: Id
+          type: integer
+        style: form
+      responses:
+        "204":
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Delete Preset
+      tags:
+      - その他
+  /speakers:
+    get:
+      description: 喋れるキャラクターの情報の一覧を返します。
+      operationId: speakers_speakers_get
+      parameters:
+      - explode: true
+        in: query
+        name: core_version
+        required: false
+        schema:
+          title: Core Version
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Speaker'
+                type: array
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Speakers
+      tags:
+      - その他
+  /speaker_info:
+    get:
+      description: |-
+        UUID で指定された喋れるキャラクターの情報を返します。
+        画像や音声はresource_formatで指定した形式で返されます。
+      operationId: speaker_info_speaker_info_get
+      parameters:
+      - explode: true
+        in: query
+        name: speaker_uuid
+        required: true
+        schema:
+          title: Speaker Uuid
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: resource_format
+        required: false
+        schema:
+          default: base64
+          enum:
+          - base64
+          - url
+          title: Resource Format
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: core_version
+        required: false
+        schema:
+          title: Core Version
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpeakerInfo'
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Speaker Info
+      tags:
+      - その他
+  /singers:
+    get:
+      description: 歌えるキャラクターの情報の一覧を返します。
+      operationId: singers_singers_get
+      parameters:
+      - explode: true
+        in: query
+        name: core_version
+        required: false
+        schema:
+          title: Core Version
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Speaker'
+                type: array
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Singers
+      tags:
+      - その他
+  /singer_info:
+    get:
+      description: |-
+        UUID で指定された歌えるキャラクターの情報を返します。
+        画像や音声はresource_formatで指定した形式で返されます。
+      operationId: singer_info_singer_info_get
+      parameters:
+      - explode: true
+        in: query
+        name: speaker_uuid
+        required: true
+        schema:
+          title: Speaker Uuid
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: resource_format
+        required: false
+        schema:
+          default: base64
+          enum:
+          - base64
+          - url
+          title: Resource Format
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: core_version
+        required: false
+        schema:
+          title: Core Version
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpeakerInfo'
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Singer Info
+      tags:
+      - その他
+  /user_dict:
+    get:
+      description: |-
+        ユーザー辞書に登録されている単語の一覧を返します。
+        単語の表層形(surface)は正規化済みの物を返します。
+      operationId: get_user_dict_words_user_dict_get
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  $ref: '#/components/schemas/UserDictWord'
+                title: Response Get User Dict Words User Dict Get
+          description: 単語のUUIDとその詳細
+      summary: Get User Dict Words
+      tags:
+      - ユーザー辞書
+  /user_dict_word:
+    post:
+      description: ユーザー辞書に言葉を追加します。
+      operationId: add_user_dict_word_user_dict_word_post
+      parameters:
+      - description: 言葉の表層形
+        explode: true
+        in: query
+        name: surface
+        required: true
+        schema:
+          description: 言葉の表層形
+          title: Surface
+          type: string
+        style: form
+      - description: 言葉の発音（カタカナ）
+        explode: true
+        in: query
+        name: pronunciation
+        required: true
+        schema:
+          description: 言葉の発音（カタカナ）
+          title: Pronunciation
+          type: string
+        style: form
+      - description: アクセント型（音が下がる場所を指す）
+        explode: true
+        in: query
+        name: accent_type
+        required: true
+        schema:
+          description: アクセント型（音が下がる場所を指す）
+          title: Accent Type
+          type: integer
+        style: form
+      - description: PROPER_NOUN（固有名詞）、COMMON_NOUN（普通名詞）、VERB（動詞）、ADJECTIVE（形容詞）、SUFFIX（語尾）のいずれか
+        explode: true
+        in: query
+        name: word_type
+        required: false
+        schema:
+          $ref: '#/components/schemas/WordTypes'
+        style: form
+      - description: 単語の優先度（0から10までの整数）。数字が大きいほど優先度が高くなる。1から9までの値を指定することを推奨
+        explode: true
+        in: query
+        name: priority
+        required: false
+        schema:
+          description: 単語の優先度（0から10までの整数）。数字が大きいほど優先度が高くなる。1から9までの値を指定することを推奨
+          maximum: 10
+          minimum: 0
+          title: Priority
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                title: Response Add User Dict Word User Dict Word Post
+                type: string
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Add User Dict Word
+      tags:
+      - ユーザー辞書
+  /user_dict_word/{word_uuid}:
+    delete:
+      description: ユーザー辞書に登録されている言葉を削除します。
+      operationId: delete_user_dict_word_user_dict_word__word_uuid__delete
+      parameters:
+      - description: 削除する言葉のUUID
+        explode: false
+        in: path
+        name: word_uuid
+        required: true
+        schema:
+          description: 削除する言葉のUUID
+          title: Word Uuid
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Delete User Dict Word
+      tags:
+      - ユーザー辞書
+    put:
+      description: ユーザー辞書に登録されている言葉を更新します。
+      operationId: rewrite_user_dict_word_user_dict_word__word_uuid__put
+      parameters:
+      - description: 更新する言葉のUUID
+        explode: false
+        in: path
+        name: word_uuid
+        required: true
+        schema:
+          description: 更新する言葉のUUID
+          title: Word Uuid
+          type: string
+        style: simple
+      - description: 言葉の表層形
+        explode: true
+        in: query
+        name: surface
+        required: true
+        schema:
+          description: 言葉の表層形
+          title: Surface
+          type: string
+        style: form
+      - description: 言葉の発音（カタカナ）
+        explode: true
+        in: query
+        name: pronunciation
+        required: true
+        schema:
+          description: 言葉の発音（カタカナ）
+          title: Pronunciation
+          type: string
+        style: form
+      - description: アクセント型（音が下がる場所を指す）
+        explode: true
+        in: query
+        name: accent_type
+        required: true
+        schema:
+          description: アクセント型（音が下がる場所を指す）
+          title: Accent Type
+          type: integer
+        style: form
+      - description: PROPER_NOUN（固有名詞）、COMMON_NOUN（普通名詞）、VERB（動詞）、ADJECTIVE（形容詞）、SUFFIX（語尾）のいずれか
+        explode: true
+        in: query
+        name: word_type
+        required: false
+        schema:
+          $ref: '#/components/schemas/WordTypes'
+        style: form
+      - description: 単語の優先度（0から10までの整数）。数字が大きいほど優先度が高くなる。1から9までの値を指定することを推奨。
+        explode: true
+        in: query
+        name: priority
+        required: false
+        schema:
+          description: 単語の優先度（0から10までの整数）。数字が大きいほど優先度が高くなる。1から9までの値を指定することを推奨。
+          maximum: 10
+          minimum: 0
+          title: Priority
+          type: integer
+        style: form
+      responses:
+        "204":
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Rewrite User Dict Word
+      tags:
+      - ユーザー辞書
+  /import_user_dict:
+    post:
+      description: 他のユーザー辞書をインポートします。
+      operationId: import_user_dict_words_import_user_dict_post
+      parameters:
+      - description: 重複したエントリがあった場合、上書きするかどうか
+        explode: true
+        in: query
+        name: override
+        required: true
+        schema:
+          description: 重複したエントリがあった場合、上書きするかどうか
+          title: Override
+          type: boolean
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              additionalProperties:
+                $ref: '#/components/schemas/UserDictWord'
+              description: インポートするユーザー辞書のデータ
+              title: Import Dict Data
+        required: true
+      responses:
+        "204":
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Import User Dict Words
+      tags:
+      - ユーザー辞書
+  /version:
+    get:
+      description: エンジンのバージョンを取得します。
+      operationId: version_version_get
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                title: Response Version Version Get
+                type: string
+          description: Successful Response
+      summary: Version
+      tags:
+      - その他
+  /core_versions:
+    get:
+      description: 利用可能なコアのバージョン一覧を取得します。
+      operationId: core_versions_core_versions_get
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                type: array
+          description: Successful Response
+      summary: Core Versions
+      tags:
+      - その他
+  /engine_manifest:
+    get:
+      description: エンジンマニフェストを取得します。
+      operationId: engine_manifest_engine_manifest_get
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineManifest'
+          description: Successful Response
+      summary: Engine Manifest
+      tags:
+      - その他
+  /setting:
+    get:
+      description: 設定ページを返します。
+      operationId: setting_get_setting_get
+      responses:
+        "200":
+          description: Successful Response
+      summary: Setting Get
+      tags:
+      - 設定
+    post:
+      description: 設定を更新します。
+      operationId: setting_post_setting_post
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_setting_post_setting_post'
+        required: true
+      responses:
+        "204":
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Setting Post
+      tags:
+      - 設定
+  /:
+    get:
+      description: ポータルページを返します。
+      operationId: get_portal_page__get
+      responses:
+        "200":
+          content:
+            text/html:
+              schema:
+                type: string
+          description: Successful Response
+      summary: Get Portal Page
+      tags:
+      - その他
+components:
+  schemas:
+    AccentPhrase:
+      description: アクセント句ごとの情報
+      example:
+        is_interrogative: false
+        moras:
+        - consonant: consonant
+          vowel: vowel
+          text: text
+          pitch: 1.4658129805029452
+          consonant_length: 0.8008281904610115
+          vowel_length: 6.027456183070403
+        - consonant: consonant
+          vowel: vowel
+          text: text
+          pitch: 1.4658129805029452
+          consonant_length: 0.8008281904610115
+          vowel_length: 6.027456183070403
+        pause_mora:
+          consonant: consonant
+          vowel: vowel
+          text: text
+          pitch: 1.4658129805029452
+          consonant_length: 0.8008281904610115
+          vowel_length: 6.027456183070403
+        accent: 5
+      properties:
+        moras:
+          description: モーラのリスト
+          items:
+            $ref: '#/components/schemas/Mora'
+          type: array
+        accent:
+          description: アクセント箇所
+          title: Accent
+          type: integer
+        pause_mora:
+          $ref: '#/components/schemas/Mora'
+        is_interrogative:
+          default: false
+          description: 疑問系かどうか
+          title: Is Interrogative
+          type: boolean
+      required:
+      - accent
+      - moras
+      title: AccentPhrase
+    AudioQuery:
+      description: 音声合成用のクエリ
+      example:
+        pauseLengthScale: 7.386281948385884
+        postPhonemeLength: 2.027123023002322
+        intonationScale: 7.061401241503109
+        pauseLength: 4.145608029883936
+        pitchScale: 2.3021358869347655
+        outputSamplingRate: 1
+        volumeScale: 9.301444243932576
+        kana: kana
+        accent_phrases:
+        - is_interrogative: false
+          moras:
+          - consonant: consonant
+            vowel: vowel
+            text: text
+            pitch: 1.4658129805029452
+            consonant_length: 0.8008281904610115
+            vowel_length: 6.027456183070403
+          - consonant: consonant
+            vowel: vowel
+            text: text
+            pitch: 1.4658129805029452
+            consonant_length: 0.8008281904610115
+            vowel_length: 6.027456183070403
+          pause_mora:
+            consonant: consonant
+            vowel: vowel
+            text: text
+            pitch: 1.4658129805029452
+            consonant_length: 0.8008281904610115
+            vowel_length: 6.027456183070403
+          accent: 5
+        - is_interrogative: false
+          moras:
+          - consonant: consonant
+            vowel: vowel
+            text: text
+            pitch: 1.4658129805029452
+            consonant_length: 0.8008281904610115
+            vowel_length: 6.027456183070403
+          - consonant: consonant
+            vowel: vowel
+            text: text
+            pitch: 1.4658129805029452
+            consonant_length: 0.8008281904610115
+            vowel_length: 6.027456183070403
+          pause_mora:
+            consonant: consonant
+            vowel: vowel
+            text: text
+            pitch: 1.4658129805029452
+            consonant_length: 0.8008281904610115
+            vowel_length: 6.027456183070403
+          accent: 5
+        speedScale: 5.637376656633329
+        outputStereo: true
+        prePhonemeLength: 3.616076749251911
+      properties:
+        accent_phrases:
+          description: アクセント句のリスト
+          items:
+            $ref: '#/components/schemas/AccentPhrase'
+          type: array
+        speedScale:
+          description: 全体の話速
+          title: Speedscale
+          type: number
+        pitchScale:
+          description: 全体の音高
+          title: Pitchscale
+          type: number
+        intonationScale:
+          description: 全体の抑揚
+          title: Intonationscale
+          type: number
+        volumeScale:
+          description: 全体の音量
+          title: Volumescale
+          type: number
+        prePhonemeLength:
+          description: 音声の前の無音時間
+          title: Prephonemelength
+          type: number
+        postPhonemeLength:
+          description: 音声の後の無音時間
+          title: Postphonemelength
+          type: number
+        pauseLength:
+          nullable: true
+          type: number
+        pauseLengthScale:
+          default: 1
+          description: 句読点などの無音時間（倍率）。デフォルト値は1
+          title: Pauselengthscale
+          type: number
+        outputSamplingRate:
+          description: 音声データの出力サンプリングレート
+          title: Outputsamplingrate
+          type: integer
+        outputStereo:
+          description: 音声データをステレオ出力するか否か
+          title: Outputstereo
+          type: boolean
+        kana:
+          description: "[読み取り専用]AquesTalk 風記法によるテキスト。音声合成用のクエリとしては無視される"
+          title: Kana
+          type: string
+      required:
+      - accent_phrases
+      - intonationScale
+      - outputSamplingRate
+      - outputStereo
+      - pitchScale
+      - postPhonemeLength
+      - prePhonemeLength
+      - speedScale
+      - volumeScale
+      title: AudioQuery
+    Body_setting_post_setting_post:
+      properties:
+        cors_policy_mode:
+          $ref: '#/components/schemas/CorsPolicyMode'
+        allow_origin:
+          title: Allow Origin
+          type: string
+      required:
+      - cors_policy_mode
+      title: Body_setting_post_setting_post
+    Body_sing_frame_f0_sing_frame_f0_post:
+      properties:
+        score:
+          $ref: '#/components/schemas/Score'
+        frame_audio_query:
+          $ref: '#/components/schemas/FrameAudioQuery'
+      required:
+      - frame_audio_query
+      - score
+      title: Body_sing_frame_f0_sing_frame_f0_post
+    Body_sing_frame_volume_sing_frame_volume_post:
+      properties:
+        score:
+          $ref: '#/components/schemas/Score'
+        frame_audio_query:
+          $ref: '#/components/schemas/FrameAudioQuery'
+      required:
+      - frame_audio_query
+      - score
+      title: Body_sing_frame_volume_sing_frame_volume_post
+    CorsPolicyMode:
+      description: CORSの許可モード
+      enum:
+      - all
+      - localapps
+      title: CorsPolicyMode
+      type: string
+    EngineManifest:
+      description: エンジン自体に関する情報
+      example:
+        supported_vvlib_manifest_version: supported_vvlib_manifest_version
+        icon: icon
+        brand_name: brand_name
+        default_sampling_rate: 0
+        uuid: uuid
+        frame_rate: 6.027456183070403
+        url: url
+        dependency_licenses:
+        - license: license
+          name: name
+          text: text
+          version: version
+        - license: license
+          name: name
+          text: text
+          version: version
+        terms_of_service: terms_of_service
+        supported_features:
+          adjust_intonation_scale: true
+          adjust_mora_pitch: true
+          adjust_pause_length: true
+          interrogative_upspeak: true
+          return_resource_url: true
+          manage_library: true
+          adjust_phoneme_length: true
+          synthesis_morphing: true
+          sing: true
+          adjust_volume_scale: true
+          adjust_speed_scale: true
+          adjust_pitch_scale: true
+        manifest_version: manifest_version
+        name: name
+        update_infos:
+        - contributors:
+          - contributors
+          - contributors
+          version: version
+          descriptions:
+          - descriptions
+          - descriptions
+        - contributors:
+          - contributors
+          - contributors
+          version: version
+          descriptions:
+          - descriptions
+          - descriptions
+      properties:
+        manifest_version:
+          description: マニフェストのバージョン
+          title: Manifest Version
+          type: string
+        name:
+          description: エンジン名
+          title: Name
+          type: string
+        brand_name:
+          description: ブランド名
+          title: Brand Name
+          type: string
+        uuid:
+          description: エンジンのUUID
+          title: Uuid
+          type: string
+        url:
+          description: エンジンのURL
+          title: Url
+          type: string
+        icon:
+          description: エンジンのアイコンをBASE64エンコードしたもの
+          title: Icon
+          type: string
+        default_sampling_rate:
+          description: デフォルトのサンプリング周波数
+          title: Default Sampling Rate
+          type: integer
+        frame_rate:
+          description: エンジンのフレームレート
+          title: Frame Rate
+          type: number
+        terms_of_service:
+          description: エンジンの利用規約
+          title: Terms Of Service
+          type: string
+        update_infos:
+          description: エンジンのアップデート情報
+          items:
+            $ref: '#/components/schemas/UpdateInfo'
+          type: array
+        dependency_licenses:
+          description: 依存関係のライセンス情報
+          items:
+            $ref: '#/components/schemas/LicenseInfo'
+          type: array
+        supported_vvlib_manifest_version:
+          description: エンジンが対応するvvlibのバージョン
+          title: Supported Vvlib Manifest Version
+          type: string
+        supported_features:
+          $ref: '#/components/schemas/SupportedFeatures'
+      required:
+      - brand_name
+      - default_sampling_rate
+      - dependency_licenses
+      - frame_rate
+      - icon
+      - manifest_version
+      - name
+      - supported_features
+      - terms_of_service
+      - update_infos
+      - url
+      - uuid
+      title: EngineManifest
+    FrameAudioQuery:
+      description: フレームごとの音声合成用のクエリ
+      example:
+        volume:
+        - 6.027456183070403
+        - 6.027456183070403
+        outputSamplingRate: 5
+        f0:
+        - 0.8008281904610115
+        - 0.8008281904610115
+        volumeScale: 5.962133916683182
+        outputStereo: true
+        phonemes:
+        - note_id: note_id
+          frame_length: 1
+          phoneme: phoneme
+        - note_id: note_id
+          frame_length: 1
+          phoneme: phoneme
+      properties:
+        f0:
+          description: フレームごとの基本周波数
+          items:
+            type: number
+          type: array
+        volume:
+          description: フレームごとの音量
+          items:
+            type: number
+          type: array
+        phonemes:
+          description: 音素のリスト
+          items:
+            $ref: '#/components/schemas/FramePhoneme'
+          type: array
+        volumeScale:
+          description: 全体の音量
+          title: Volumescale
+          type: number
+        outputSamplingRate:
+          description: 音声データの出力サンプリングレート
+          title: Outputsamplingrate
+          type: integer
+        outputStereo:
+          description: 音声データをステレオ出力するか否か
+          title: Outputstereo
+          type: boolean
+      required:
+      - f0
+      - outputSamplingRate
+      - outputStereo
+      - phonemes
+      - volume
+      - volumeScale
+      title: FrameAudioQuery
+    FramePhoneme:
+      description: 音素の情報
+      example:
+        note_id: note_id
+        frame_length: 1
+        phoneme: phoneme
+      properties:
+        phoneme:
+          description: 音素
+          title: Phoneme
+          type: string
+        frame_length:
+          description: 音素のフレーム長
+          title: Frame Length
+          type: integer
+        note_id:
+          nullable: true
+          type: string
+      required:
+      - frame_length
+      - phoneme
+      title: FramePhoneme
+    HTTPValidationError:
+      example:
+        detail:
+        - msg: msg
+          loc:
+          - ValidationError_loc_inner
+          - ValidationError_loc_inner
+          type: type
+        - msg: msg
+          loc:
+          - ValidationError_loc_inner
+          - ValidationError_loc_inner
+          type: type
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+      title: HTTPValidationError
+    LicenseInfo:
+      description: 依存ライブラリのライセンス情報
+      example:
+        license: license
+        name: name
+        text: text
+        version: version
+      properties:
+        name:
+          description: 依存ライブラリ名
+          title: Name
+          type: string
+        version:
+          description: 依存ライブラリのバージョン
+          title: Version
+          type: string
+        license:
+          description: 依存ライブラリのライセンス名
+          title: License
+          type: string
+        text:
+          description: 依存ライブラリのライセンス本文
+          title: Text
+          type: string
+      required:
+      - name
+      - text
+      title: LicenseInfo
+    Mora:
+      description: モーラ（子音＋母音）ごとの情報
+      example:
+        consonant: consonant
+        vowel: vowel
+        text: text
+        pitch: 1.4658129805029452
+        consonant_length: 0.8008281904610115
+        vowel_length: 6.027456183070403
+      properties:
+        text:
+          description: 文字
+          title: Text
+          type: string
+        consonant:
+          description: 子音の音素
+          title: Consonant
+          type: string
+        consonant_length:
+          description: 子音の音長
+          title: Consonant Length
+          type: number
+        vowel:
+          description: 母音の音素
+          title: Vowel
+          type: string
+        vowel_length:
+          description: 母音の音長
+          title: Vowel Length
+          type: number
+        pitch:
+          description: 音高
+          title: Pitch
+          type: number
+      required:
+      - pitch
+      - text
+      - vowel
+      - vowel_length
+      title: Mora
+    MorphableTargetInfo:
+      example:
+        is_morphable: true
+      properties:
+        is_morphable:
+          description: 指定したキャラクターに対してモーフィングの可否
+          title: Is Morphable
+          type: boolean
+      required:
+      - is_morphable
+      title: MorphableTargetInfo
+    Note:
+      description: 音符ごとの情報
+      example:
+        frame_length: 6
+        lyric: lyric
+        id: id
+        key: 0
+      properties:
+        id:
+          nullable: true
+          type: string
+        key:
+          description: 音階
+          title: Key
+          type: integer
+        frame_length:
+          description: 音符のフレーム長
+          title: Frame Length
+          type: integer
+        lyric:
+          description: 音符の歌詞
+          title: Lyric
+          type: string
+      required:
+      - frame_length
+      - lyric
+      title: Note
+    ParseKanaBadRequest:
+      example:
+        error_name: error_name
+        error_args:
+          key: error_args
+        text: text
+      properties:
+        text:
+          description: エラーメッセージ
+          title: Text
+          type: string
+        error_name:
+          description: |-
+            エラー名
+
+            |name|description|
+            |---|---|
+            | UNKNOWN_TEXT | 判別できない読み仮名があります: {text} |
+            | ACCENT_TOP | 句頭にアクセントは置けません: {text} |
+            | ACCENT_TWICE | 1つのアクセント句に二つ以上のアクセントは置けません: {text} |
+            | ACCENT_NOTFOUND | アクセントを指定していないアクセント句があります: {text} |
+            | EMPTY_PHRASE | {position}番目のアクセント句が空白です |
+            | INTERROGATION_MARK_NOT_AT_END | アクセント句末以外に「？」は置けません: {text} |
+            | INFINITE_LOOP | 処理時に無限ループになってしまいました...バグ報告をお願いします。 |
+          title: Error Name
+          type: string
+        error_args:
+          additionalProperties:
+            type: string
+          description: エラーを起こした箇所
+          title: Error Args
+      required:
+      - error_args
+      - error_name
+      - text
+      title: ParseKanaBadRequest
+    Preset:
+      description: プリセット情報
+      example:
+        pauseLengthScale: 2.027123023002322
+        postPhonemeLength: 9.301444243932576
+        intonationScale: 5.637376656633329
+        pauseLength: 3.616076749251911
+        pitchScale: 5.962133916683182
+        name: name
+        id: 0
+        speaker_uuid: speaker_uuid
+        volumeScale: 2.3021358869347655
+        style_id: 6
+        speedScale: 1.4658129805029452
+        prePhonemeLength: 7.061401241503109
+      properties:
+        id:
+          description: プリセットID
+          title: Id
+          type: integer
+        name:
+          description: プリセット名
+          title: Name
+          type: string
+        speaker_uuid:
+          description: キャラクターのUUID
+          title: Speaker Uuid
+          type: string
+        style_id:
+          description: スタイルID
+          title: Style Id
+          type: integer
+        speedScale:
+          description: 全体の話速
+          title: Speedscale
+          type: number
+        pitchScale:
+          description: 全体の音高
+          title: Pitchscale
+          type: number
+        intonationScale:
+          description: 全体の抑揚
+          title: Intonationscale
+          type: number
+        volumeScale:
+          description: 全体の音量
+          title: Volumescale
+          type: number
+        prePhonemeLength:
+          description: 音声の前の無音時間
+          title: Prephonemelength
+          type: number
+        postPhonemeLength:
+          description: 音声の後の無音時間
+          title: Postphonemelength
+          type: number
+        pauseLength:
+          description: 句読点などの無音時間
+          title: Pauselength
+          type: number
+        pauseLengthScale:
+          default: 1
+          description: 句読点などの無音時間（倍率）
+          title: Pauselengthscale
+          type: number
+      required:
+      - id
+      - intonationScale
+      - name
+      - pitchScale
+      - postPhonemeLength
+      - prePhonemeLength
+      - speaker_uuid
+      - speedScale
+      - style_id
+      - volumeScale
+      title: Preset
+    Score:
+      description: 楽譜情報
+      example:
+        notes:
+        - frame_length: 6
+          lyric: lyric
+          id: id
+          key: 0
+        - frame_length: 6
+          lyric: lyric
+          id: id
+          key: 0
+      properties:
+        notes:
+          description: 音符のリスト
+          items:
+            $ref: '#/components/schemas/Note'
+          type: array
+      required:
+      - notes
+      title: Score
+    Speaker:
+      description: キャラクター情報
+      example:
+        supported_features:
+          permitted_synthesis_morphing: ALL
+        name: name
+        styles:
+        - name: name
+          id: 0
+          type: talk
+        - name: name
+          id: 0
+          type: talk
+        speaker_uuid: speaker_uuid
+        version: version
+      properties:
+        name:
+          description: 名前
+          title: Name
+          type: string
+        speaker_uuid:
+          description: キャラクターのUUID
+          title: Speaker Uuid
+          type: string
+        styles:
+          description: スタイルの一覧
+          items:
+            $ref: '#/components/schemas/SpeakerStyle'
+          type: array
+        version:
+          description: キャラクターのバージョン
+          title: Version
+          type: string
+        supported_features:
+          $ref: '#/components/schemas/SpeakerSupportedFeatures'
+      required:
+      - name
+      - speaker_uuid
+      - styles
+      - version
+      title: Speaker
+    SpeakerInfo:
+      description: キャラクターの追加情報
+      example:
+        style_infos:
+        - icon: icon
+          voice_samples:
+          - voice_samples
+          - voice_samples
+          id: 0
+          portrait: portrait
+        - icon: icon
+          voice_samples:
+          - voice_samples
+          - voice_samples
+          id: 0
+          portrait: portrait
+        portrait: portrait
+        policy: policy
+      properties:
+        policy:
+          description: policy.md
+          title: Policy
+          type: string
+        portrait:
+          description: 立ち絵画像をbase64エンコードしたもの、あるいはURL
+          title: Portrait
+          type: string
+        style_infos:
+          description: スタイルの追加情報
+          items:
+            $ref: '#/components/schemas/StyleInfo'
+          type: array
+      required:
+      - policy
+      - portrait
+      - style_infos
+      title: SpeakerInfo
+    SpeakerStyle:
+      description: キャラクターのスタイル情報
+      example:
+        name: name
+        id: 0
+        type: talk
+      properties:
+        name:
+          description: スタイル名
+          title: Name
+          type: string
+        id:
+          description: スタイルID
+          title: Id
+          type: integer
+        type:
+          default: talk
+          description: スタイルの種類。talk:音声合成クエリの作成と音声合成が可能。singing_teacher:歌唱音声合成用のクエリの作成が可能。frame_decode:歌唱音声合成が可能。sing:歌唱音声合成用のクエリの作成と歌唱音声合成が可能。
+          enum:
+          - talk
+          - singing_teacher
+          - frame_decode
+          - sing
+          title: Type
+          type: string
+      required:
+      - id
+      - name
+      title: SpeakerStyle
+    SpeakerSupportedFeatures:
+      description: キャラクターの対応機能の情報
+      example:
+        permitted_synthesis_morphing: ALL
+      properties:
+        permitted_synthesis_morphing:
+          default: ALL
+          description: モーフィング機能への対応。'ALL' は「全て許可」、'SELF_ONLY' は「同じキャラクター内でのみ許可」、'NOTHING'
+            は「全て禁止」
+          enum:
+          - ALL
+          - SELF_ONLY
+          - NOTHING
+          title: Permitted Synthesis Morphing
+          type: string
+      title: SpeakerSupportedFeatures
+    StyleInfo:
+      description: スタイルの追加情報
+      example:
+        icon: icon
+        voice_samples:
+        - voice_samples
+        - voice_samples
+        id: 0
+        portrait: portrait
+      properties:
+        id:
+          description: スタイルID
+          title: Id
+          type: integer
+        icon:
+          description: このスタイルのアイコンをbase64エンコードしたもの、あるいはURL
+          title: Icon
+          type: string
+        portrait:
+          description: このスタイルの立ち絵画像をbase64エンコードしたもの、あるいはURL
+          title: Portrait
+          type: string
+        voice_samples:
+          description: サンプル音声をbase64エンコードしたもの、あるいはURL
+          items:
+            type: string
+          type: array
+      required:
+      - icon
+      - id
+      - voice_samples
+      title: StyleInfo
+    SupportedDevicesInfo:
+      description: 対応しているデバイスの情報
+      example:
+        cuda: true
+        dml: true
+        cpu: true
+      properties:
+        cpu:
+          description: CPUに対応しているか
+          title: Cpu
+          type: boolean
+        cuda:
+          description: CUDA(Nvidia GPU)に対応しているか
+          title: Cuda
+          type: boolean
+        dml:
+          description: DirectML(Nvidia GPU/Radeon GPU等)に対応しているか
+          title: Dml
+          type: boolean
+      required:
+      - cpu
+      - cuda
+      - dml
+      title: SupportedDevicesInfo
+    SupportedFeatures:
+      description: エンジンが持つ機能の一覧
+      example:
+        adjust_intonation_scale: true
+        adjust_mora_pitch: true
+        adjust_pause_length: true
+        interrogative_upspeak: true
+        return_resource_url: true
+        manage_library: true
+        adjust_phoneme_length: true
+        synthesis_morphing: true
+        sing: true
+        adjust_volume_scale: true
+        adjust_speed_scale: true
+        adjust_pitch_scale: true
+      properties:
+        adjust_mora_pitch:
+          description: モーラごとの音高の調整
+          title: Adjust Mora Pitch
+          type: boolean
+        adjust_phoneme_length:
+          description: 音素ごとの長さの調整
+          title: Adjust Phoneme Length
+          type: boolean
+        adjust_speed_scale:
+          description: 全体の話速の調整
+          title: Adjust Speed Scale
+          type: boolean
+        adjust_pitch_scale:
+          description: 全体の音高の調整
+          title: Adjust Pitch Scale
+          type: boolean
+        adjust_intonation_scale:
+          description: 全体の抑揚の調整
+          title: Adjust Intonation Scale
+          type: boolean
+        adjust_volume_scale:
+          description: 全体の音量の調整
+          title: Adjust Volume Scale
+          type: boolean
+        adjust_pause_length:
+          description: 句読点などの無音時間の調整
+          title: Adjust Pause Length
+          type: boolean
+        interrogative_upspeak:
+          description: 疑問文の自動調整
+          title: Interrogative Upspeak
+          type: boolean
+        synthesis_morphing:
+          description: 2種類のスタイルでモーフィングした音声を合成
+          title: Synthesis Morphing
+          type: boolean
+        sing:
+          description: 歌唱音声合成
+          title: Sing
+          type: boolean
+        manage_library:
+          description: 音声ライブラリのインストール・アンインストール
+          title: Manage Library
+          type: boolean
+        return_resource_url:
+          description: キャラクター情報のリソースをURLで返送
+          title: Return Resource Url
+          type: boolean
+      required:
+      - adjust_intonation_scale
+      - adjust_mora_pitch
+      - adjust_phoneme_length
+      - adjust_pitch_scale
+      - adjust_speed_scale
+      - adjust_volume_scale
+      - interrogative_upspeak
+      - synthesis_morphing
+      title: SupportedFeatures
+    UpdateInfo:
+      description: エンジンのアップデート情報
+      example:
+        contributors:
+        - contributors
+        - contributors
+        version: version
+        descriptions:
+        - descriptions
+        - descriptions
+      properties:
+        version:
+          description: エンジンのバージョン名
+          title: Version
+          type: string
+        descriptions:
+          description: アップデートの詳細についての説明
+          items:
+            type: string
+          type: array
+        contributors:
+          description: 貢献者名
+          items:
+            type: string
+          type: array
+      required:
+      - descriptions
+      - version
+      title: UpdateInfo
+    UserDictWord:
+      description: 辞書のコンパイルに使われる情報
+      example:
+        inflectional_form: inflectional_form
+        accent_associative_rule: accent_associative_rule
+        accent_type: 1
+        surface: surface
+        pronunciation: pronunciation
+        part_of_speech: part_of_speech
+        part_of_speech_detail_3: part_of_speech_detail_3
+        part_of_speech_detail_1: part_of_speech_detail_1
+        yomi: yomi
+        part_of_speech_detail_2: part_of_speech_detail_2
+        priority: 0
+        inflectional_type: inflectional_type
+        mora_count: 5
+        context_id: 6
+        stem: stem
+      properties:
+        surface:
+          description: 表層形
+          title: Surface
+          type: string
+        priority:
+          description: 優先度
+          maximum: 10.0
+          minimum: 0.0
+          title: Priority
+          type: integer
+        context_id:
+          default: 1348
+          description: 文脈ID
+          title: Context Id
+          type: integer
+        part_of_speech:
+          description: 品詞
+          title: Part Of Speech
+          type: string
+        part_of_speech_detail_1:
+          description: 品詞細分類1
+          title: Part Of Speech Detail 1
+          type: string
+        part_of_speech_detail_2:
+          description: 品詞細分類2
+          title: Part Of Speech Detail 2
+          type: string
+        part_of_speech_detail_3:
+          description: 品詞細分類3
+          title: Part Of Speech Detail 3
+          type: string
+        inflectional_type:
+          description: 活用型
+          title: Inflectional Type
+          type: string
+        inflectional_form:
+          description: 活用形
+          title: Inflectional Form
+          type: string
+        stem:
+          description: 原形
+          title: Stem
+          type: string
+        yomi:
+          description: 読み
+          title: Yomi
+          type: string
+        pronunciation:
+          description: 発音
+          title: Pronunciation
+          type: string
+        accent_type:
+          description: アクセント型
+          title: Accent Type
+          type: integer
+        mora_count:
+          description: モーラ数
+          title: Mora Count
+          type: integer
+        accent_associative_rule:
+          description: アクセント結合規則
+          title: Accent Associative Rule
+          type: string
+      required:
+      - accent_associative_rule
+      - accent_type
+      - inflectional_form
+      - inflectional_type
+      - part_of_speech
+      - part_of_speech_detail_1
+      - part_of_speech_detail_2
+      - part_of_speech_detail_3
+      - priority
+      - pronunciation
+      - stem
+      - surface
+      - yomi
+      title: UserDictWord
+    ValidationError:
+      example:
+        msg: msg
+        loc:
+        - ValidationError_loc_inner
+        - ValidationError_loc_inner
+        type: type
+      properties:
+        loc:
+          items:
+            $ref: '#/components/schemas/ValidationError_loc_inner'
+          type: array
+        msg:
+          title: Message
+          type: string
+        type:
+          title: Error Type
+          type: string
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    WordTypes:
+      description: 品詞
+      enum:
+      - PROPER_NOUN
+      - COMMON_NOUN
+      - VERB
+      - ADJECTIVE
+      - SUFFIX
+      title: WordTypes
+      type: string
+    ValidationError_loc_inner:
+      anyOf:
+      - type: string
+      - type: integer
