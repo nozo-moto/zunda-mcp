@@ -1,4 +1,4 @@
-module zundamon-mcp
+module github.com/nozo-moto/zunda-mcp
 
 go 1.24.2
 

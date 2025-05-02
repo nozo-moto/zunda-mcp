@@ -4,7 +4,7 @@ import (
 	"context"
 	"io"
 
-	openapi "zundamon-mcp/pkg/generated"
+	openapi "github.com/nozo-moto/zunda-mcp/pkg/generated"
 )
 
 // Synthesizer は音声合成エンジンのクエリ取得と合成処理を抽象化したインターフェースです。

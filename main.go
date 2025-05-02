@@ -1,22 +1,15 @@
 package main
 
 import (
-	// "bytes"
-
 	"context"
-	// "encoding/json"
 	"errors"
 	"flag"
 	"fmt"
 	"io"
-
-	// "net/http"
-	// "net/url"
-
 	"os"
 	"os/exec"
 
-	openapi "zundamon-mcp/pkg/generated"
+	openapi "github.com/nozo-moto/zunda-mcp/pkg/generated"
 
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
